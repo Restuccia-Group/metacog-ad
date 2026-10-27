@@ -1,0 +1,46 @@
+# Byte-compiled / optimized
+__pycache__/
+*.py[codz]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Virtual environments
+.venv
+env/
+venv/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+
+# Type checkers / linters
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+.pyre/
+.ruff_cache/
+
+# Editors / IDEs
+.idea/
+.vscode/
+.cursor/
+.ipynb_checkpoints
+
+# Run outputs, in case a run is pointed at the working tree. They normally go to $RUN_ROOT.
+results/
+logs/
+
+
+# Generated tables. `tables/run_all.sh` rewrites them from a run tree.
+tables/out/

@@ -1,0 +1,88 @@
+Unless explicitly stated otherwise, all files in this project are licensed under the terms described in the LICENSE file in this repository.
+
+Any source code or other content that is subject to different licensing terms is clearly marked in the file itself or in accompanying documentation.
+Third party licenses are located in the ./third_party_licenses/ directory.
+
+If you download or use any DINOv3 model weights, you are also subject to the separate license terms provided by Meta for DINOv3. Nothing in this repository's LICENSE grants any rights to the DINOv3 model or its weights.
+
+This repository is CC-BY-NC-4.0, so its own noncommercial restriction is at least as strict as Meta's DINOv3 terms; but a downstream user who takes only part of this work still has to satisfy the model's terms separately for whichever weights they actually load.
+
+Software dependencies are third-party components and are provided under their respective licenses. Please refer to the individual packages' license information for details.
+
+--------------------------------------------------------------------------------
+MODIFICATION NOTICE (metacog-ad)
+--------------------------------------------------------------------------------
+
+This repository is a MODIFIED FORK of SuperADD:
+
+    https://github.com/LukasRoom/SuperADD   (upstream commit 44cf251)
+    Roming, Lehnerer, Funk, Michel, Maier, Laengle, Beyerer.
+    "SuperADD: Training-free Class-agnostic Anomaly Segmentation --
+     CVPR 2026 VAND 4.0 Workshop Challenge Industrial Track."
+    arXiv:2605.14808
+
+SuperADD's own source files carry no SPDX headers, so the repository LICENSE
+(Creative Commons Attribution-NonCommercial 4.0 International) governs them.
+This fork therefore inherits CC-BY-NC-4.0, INCLUDING the newly written code
+under src/metacog/. CC-BY-NC-4.0 forbids downstream relicensing, so no part
+of this repository may be redistributed under more permissive terms.
+
+Note further that SuperADD's README states it "is based on SuperAD by Zhang et
+al." (https://github.com/Summerdayhurricane/SuperAD), a third link in the
+provenance chain that upstream does not license-document. Anyone releasing work
+derived from this repository should establish SuperAD's terms separately.
+
+Changes made in this fork
+-------------------------
+
+MODIFIED
+  tracks/industrial/src/industrial/model.py
+      The scorer is now pluggable (see src/metacog/scorers/). There are nine
+      changes. Each one has a `# metacog:` comment in the code, and
+      docs/UPSTREAM_DIFF.md lists them all. The method itself does not change:
+      the preprocessing, the tiling, the 7/8 prototype split, the threshold
+      rule, the layer mean and the post-processing are all unchanged.
+
+UNCHANGED, BYTE-IDENTICAL (sha256 pinned by tests/test_core.py)
+  tracks/industrial/src/industrial/nearest_neighbor.py
+  tracks/industrial/src/industrial/post_process.py
+
+DELETED
+  utils/industrial/evaluate.py     no importers; src/metacog/pipeline/evaluation.py
+                                   evaluates instead.
+                                   Dual MVTec CC-BY-NC / Intel Apache-2.0.
+  utils/industrial/submission.py   challenge-tarball packaging only; not used
+                                   by the paper.
+                                   Dual MVTec CC-BY-NC / Intel Apache-2.0.
+  utils/industrial/types.py        MVTec-AD-2-only Category/Split enums,
+  utils/industrial/dataset.py      superseded by src/metacog/pipeline/datasets/.
+                                   Copyright (C) 2026 Intel Corporation,
+                                   Apache-2.0.
+  utils/auto_batch.py              no importers anywhere in the tree.
+                                   Copyright (C) 2026 Intel Corporation,
+                                   Apache-2.0.
+  utils/industrial/paths.py        its config.json-singleton model conflicts
+                                   with per-dataset configs.
+  tracks/.../{train,test,submit}.py  orchestration only; replaced by
+                                   src/metacog/run.py.
+  config.json                      split into one file per run under configs/.
+  uv.lock, utils/pyproject.toml    the uv workspace is gone. So is
+  tracks/industrial/pyproject.toml  its `dinov3` git dependency, which needs
+                                   Meta's gated weights. One pyproject.toml at
+                                   the repository root replaces all of them.
+
+ADDED
+  src/metacog/scorers/             scorer abstraction: the Scorer ABC, the
+                                   kNN memory-bank arm and the Mahalanobis arm.
+  src/metacog/pipeline/            timm backbone, scale rule and tiling,
+                                   dataset adapters, threshold rules, metrics.
+  src/metacog/run.py               the grid runner.
+  src/metacog/vendor/mvtec_pro/    MVTec's official AU-PRO implementation,
+                                   unmodified. BSD-3-Clause,
+                                   Copyright 2022 MVTec Software GmbH.
+                                   See third_party_licenses/MVTecEval_BSD3.txt.
+
+The DINOv3 backbone is loaded through `timm` from the Hugging Face Hub rather
+than through `torch.hub` from Meta's gated checkpoint release, because the
+latter is not obtainable. The weights are the same LVD-1689M checkpoint,
+repackaged.
